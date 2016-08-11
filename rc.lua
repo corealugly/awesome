@@ -26,17 +26,18 @@ local blingbling = require("blingbling")
 -----------------------------------------------------------
 os.setlocale("en_US.UTF-8")
 
---#autorun
+
+-------------------------------------
+----- Autorun ---
+-------------------------------------
 --os.execute("pgrep -u $USER -x nm-applet || (nm-applet &)")
----os.execute("pgrep -u $user -x xxkb || (xxkb &)")
 os.execute("pgrep -u $user -x kbdd || $(kbdd &)")
 os.execute("setxkbmap -layout us,ru -variant -option  grp:alt_shift_toggle, terminate:ctrl_alt_bksp")
 --os.execute("pgrep -u $USER -x xscreensaver || (xscreensaver -nosplash &)")
 
-
--- {{{ Error handling
--- Check if awesome encountered an error during startup and fell back to
--- another config (This code will only ever execute for the fallback config)
+-------------------------------------
+----- Error handling ---
+-------------------------------------
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
                      title = "Oops, there were errors during startup!",
@@ -57,11 +58,9 @@ do
         in_error = false
     end)
 end
--- }}}
-
 -------------------------------------
 ----- Устанавливаем тему ---
----------------------------------------
+-------------------------------------
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 ----------------------------------------------------------------------
@@ -164,8 +163,8 @@ end
 
 
 ---------------------------------------------------------
------ Тэги - виртуальные рабочие столы ---
------------------------------------------------------------
+----- Tag - virtual workspace ---
+---------------------------------------------------------
 tags = {}
 for s = 1, screen.count() do
     tags[s] = awful.tag({ "web", "note", "terminal", "file", "media", "chat"}, s,
@@ -197,28 +196,30 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 
 ------------------------------------------------------------------
-------- настройка виджетов --- 
+------- Seyyting widgets --- 
+------------------------------------------------------------------
 ------------------------------------------------------------------
 ---Separator 
 -----------------------------------
+--separator = wibox.widget.textbox()
 separator = blingbling.text_box.new()
 --separator:set_text(" : : ")
 separator:set_text(" | ")
-separator:set_font_size(10)
+separator:set_font_size(13)
 -----------------------------------
 ---Volume widget "♫"
 -----------------------------------
---volume_master_bar = blingbling.volume.new({height = 25, width = 40, v_margin = 0,  bar =true, show_text = false, label ="$percent%", pulseaudio = true})
---volume_master_bar:update_master()
---volume_master_bar:set_master_control()
+volume_master_bar = blingbling.volume.new({height = 25, width = 40, v_margin = 0,  bar =true, show_text = false, label ="$percent%", pulseaudio = true})
+volume_master_bar:update_master()
+volume_master_bar:set_master_control()
 
-volume_master_text = blingbling.volume.new({height = 18, width = 25, v_margin = 4,  bar =false, show_text = true, label ="$percent%", pulseaudio = true})
+volume_master_text = blingbling.volume.new({height = 18, width = 25, v_margin = 10,  bar =false, show_text = true, label ="$percent%", pulseaudio = true})
 volume_master_text:update_master()
 volume_master_text:set_master_control()
 
-volume_label = blingbling.text_box.new() 
-volume_label:set_text("♫")
-volume_label:set_font_size(12)
+--volume_label = blingbling.text_box.new() 
+--volume_label:set_text("♫")
+--volume_label:set_font_size(13)
 
 ----------------------------------
 ---Net widget
@@ -237,15 +238,15 @@ netWidget:set_interface("vbr0")
 netWidget:set_show_text(true)
 netWidget:set_url_for_ext_ip(nil)
 netWidget:set_ippopup()
-netWidget:set_font_size(7)
+netWidget:set_font_size(8)
 
 ----------------------------------
----CPU widget
+---CPU widget line
 ----------------------------------
 
 cpuwidgetText = blingbling.text_box.new()
 cpuwidgetText:set_text("CPU : ")
-cpuwidgetText:set_font_size(10)
+cpuwidgetText:set_font_size(13)
 --netWidgetText:set_background_color("")
 
 cpuwidget = blingbling.line_graph({ height = 18,
@@ -263,9 +264,23 @@ cpuwidget = blingbling.line_graph({ height = 18,
 --cpu_graph:set_graph_background_color("#00000033")
 vicious.register(cpuwidget, vicious.widgets.cpu,'$1',2)
 
+----------------------------------
+---CORE widget 
+----------------------------------
+
 corewidgetText = blingbling.text_box.new()
 corewidgetText:set_text("CORE : ")
-corewidgetText:set_font_size(10)
+corewidgetText:set_font_size(13)
+
+--core_start=7
+--core_end=8
+
+--cores_graph_conf ={height = 18, width = 8, rounded_size = 0.3}
+--cores_graphs = {}
+--for i=core_start,core_end do
+--  cores_graphs[i] = blingbling.progress_graph( cores_graph_conf)
+--  vicious.register(cores_graphs[i], vicious.widgets.cpu, "$"..(i+1).."",1)
+--end
 
 ---------------------------------------------
 --- MY CRAZY ASS SQUARE WIDGET, BEWARE MAN
@@ -296,19 +311,6 @@ corewidgetText:set_font_size(10)
 --    end,
 --    2)
 
-----------------------------------
----CORE widget
-----------------------------------
-
---core_start=7
---core_end=8
-
---cores_graph_conf ={height = 18, width = 8, rounded_size = 0.3}
---cores_graphs = {}
---for i=core_start,core_end do
---  cores_graphs[i] = blingbling.progress_graph( cores_graph_conf)
---  vicious.register(cores_graphs[i], vicious.widgets.cpu, "$"..(i+1).."",1)
---end
 
 -----------------------------------
 ---keyboard layout widget
@@ -317,14 +319,17 @@ corewidgetText:set_font_size(10)
 kbdwidget = blingbling.text_box.new()
 kbdwidget.border_width = 1
 kbdwidget.border_color = beautiful.fg_normal
-kbdwidget:set_text("✡ US")
+--kbdwidget:set_text("✡ US")
+kbdwidget:set_text("Eng")
+kbdwidget:set_font_size(13)
 
 dbus.request_name("session", "ru.gentoo.kbdd")
 dbus.add_match("session", "interface='ru.gentoo.kbdd',member='layoutChanged'")
 dbus.connect_signal("ru.gentoo.kbdd", function(...)
     local data = {...}
     local layout = data[2]
-    lts = {[0] = "✡ US", [1] = "☭ RU"}
+    --lts = {[0] = "✡ US", [1] = "☭ RU"}
+    lts = {[0] = "Eng", [1] = "Rus"}
     kbdwidget:set_text(" "..lts[layout].." ")
     --kbdwidget:set_markup(" " ..lts[layout].. "")
     end
@@ -450,9 +455,9 @@ local right_layout = wibox.layout.fixed.horizontal()
 --	right_layout:add(my_widget)
 --	right_layout:add(separator)
 	--]]
-	right_layout:add(volume_label)
+--	right_layout:add(volume_label)
 	right_layout:add(volume_master_text)
---	right_layout:add(volume_master_bar)
+	right_layout:add(volume_master_bar)
 	right_layout:add(separator)
 	right_layout:add(cal)
 	right_layout:add(separator)

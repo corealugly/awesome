@@ -25,7 +25,7 @@ function textclock.new(format, timeout)
 
     local w = textbox.new()
     local timer = capi.timer { timeout = timeout }
-    timer:connect_signal("timeout", function() w:set_text(os.date(format)); w:set_font_size(10) end)
+    timer:connect_signal("timeout", function() w:set_text(os.date(format)); w:set_font_size(13) end)
     timer:start()
     timer:emit_signal("timeout")
     return w
