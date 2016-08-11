@@ -557,8 +557,10 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
+    --awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
+    awful.key({ modkey },           "`",     function () mypromptbox[mouse.screen]:run() end),
 
+    --awful.key({ modkey }, "x",
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run({ prompt = "Run Lua code: " },
@@ -588,6 +590,9 @@ clientkeys = awful.util.table.join(
             c.maximized_horizontal = not c.maximized_horizontal
             c.maximized_vertical   = not c.maximized_vertical
         end),
+    ----------------------------------
+    -----sound bind key
+    ----------------------------------
     awful.key({ }, "XF86AudioMute", function() awful.util.spawn_with_shell("pactl set-sink-mute @DEFAULT_SINK@ toggle")        end),
     awful.key({ }, "XF86AudioLowerVolume", function() awful.util.spawn_with_shell("pactl set-sink-volume @DEFAULT_SINK@ -2%")  end),
     awful.key({ }, "XF86AudioRaiseVolume", function() awful.util.spawn_with_shell("pactl set-sink-volume @DEFAULT_SINK@ +2%")  end)
